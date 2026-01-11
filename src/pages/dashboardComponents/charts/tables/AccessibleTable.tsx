@@ -4,7 +4,7 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, useTheme, useMediaQuery } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useAuthStore } from "../../../../store";
@@ -18,6 +18,9 @@ const formatDate = (date) => {
 /* ---------- Component ---------- */
 export default function RecentPatientsTable() {
   const { token } = useAuthStore();
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const { data: patientData, isLoading } = useQuery({
     queryKey: ["patient-data"],
@@ -47,8 +50,8 @@ export default function RecentPatientsTable() {
         backgroundColor: "#FFFFFF",
       }}
     >
-      <TableContainer>
-        <Table>
+      <TableContainer sx={{ overflowX: "auto" }}>
+        <Table sx={{ minWidth: isMobile ? 600 : 1200 }}>
           {/* -------- Title Row -------- */}
           <TableHead>
             <TableRow>
@@ -86,29 +89,17 @@ export default function RecentPatientsTable() {
 
             {/* -------- Column Headers -------- */}
             <TableRow sx={{ backgroundColor: "#F4F7FF" }}>
-              {[
-                "#",
-                "Sign Up Date",
-                "Patient Name",
-                "Email Address",
-                "Phone Number",
-                "Last Seen Date",
-                "Location",
-                "Device",
-                "Status",
-              ].map((header) => (
-                <TableCell
-                  key={header}
-                  sx={{
-                    fontSize: "13px",
-                    fontWeight: 600,
-                    color: "#6C7278",
-                    borderBottom: "1px solid #E6E8EC",
-                  }}
-                >
-                  {header}
-                </TableCell>
-              ))}
+              <TableCell>#</TableCell>
+              <TableCell>Sign Up Date</TableCell>
+              <TableCell>Patient Name</TableCell>
+
+              {!isMobile && <TableCell>Email Address</TableCell>}
+              {!isMobile && <TableCell>Phone Number</TableCell>}
+              {!isMobile && <TableCell>Last Seen Date</TableCell>}
+              {!isMobile && <TableCell>Location</TableCell>}
+              {!isMobile && <TableCell>Device</TableCell>}
+
+              <TableCell>Status</TableCell>
             </TableRow>
           </TableHead>
 
@@ -131,17 +122,21 @@ export default function RecentPatientsTable() {
                     borderBottom: "1px solid #F0F0F0",
                     fontSize: "14px",
                     color: "#212121",
+                    whiteSpace: "nowrap",
                   },
                 }}
               >
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{formatDate(row.created_at)}</TableCell>
                 <TableCell>{row.first_name || "N/A"}</TableCell>
-                <TableCell>{row.email || "N/A"}</TableCell>
-                <TableCell>{row.phone || "N/A"}</TableCell>
-                <TableCell>{formatDate(row.last_seen)}</TableCell>
-                <TableCell>{row.state || "N/A"}</TableCell>
-                <TableCell>{row.device || "N/A"}</TableCell>
+
+                {!isMobile && <TableCell>{row.email || "N/A"}</TableCell>}
+                {!isMobile && <TableCell>{row.phone || "N/A"}</TableCell>}
+                {!isMobile && (
+                  <TableCell>{formatDate(row.last_seen)}</TableCell>
+                )}
+                {!isMobile && <TableCell>{row.state || "N/A"}</TableCell>}
+                {!isMobile && <TableCell>{row.device || "N/A"}</TableCell>}
 
                 {/* -------- Status Badge -------- */}
                 <TableCell>
@@ -153,12 +148,11 @@ export default function RecentPatientsTable() {
                       fontSize: "12px",
                       fontWeight: 500,
                       textTransform: "capitalize",
-                      backgroundColor:
-                        row.status === "pending" ? "#ECF8F0CC" : "#ECF8F0CC",
-                      color: row.status === "pending" ? "#1C8C6E" : "#1C8C6E",
+                      backgroundColor: "#ECF8F0CC",
+                      color: "#1C8C6E",
                     }}
                   >
-                    {row.status}
+                    {row.status || "N/A"}
                   </Box>
                 </TableCell>
               </TableRow>

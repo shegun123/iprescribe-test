@@ -1,128 +1,168 @@
-
 import {
   Box,
-  
   Typography,
   Stack,
-
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
-import more from "../../../assets/more.svg"
-import { useTheme, useMediaQuery } from "@mui/material";
+import more from "../../../assets/more.svg";
 
 
-const DATA = [
-  { label: "Pediatrics", value: 45, color: "#00C9A7" },
-  { label: "Cardiology", value: 30, color: "#4C6EF5" },
-  { label: "Surgery", value: 15, color: "#FF9F43" },
-  { label: "Others", value: 10, color: "#FF6B81" },
-];
-
+/* ---------- Constants ---------- */
 const RADIUS = 90;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
-export default function TopSpecialties() {
-  let offset = 0;
-
+/* ---------- Component ---------- */
+export default function TopSpecialties({ statData }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-    
+
+  /* ---------- Extract API Data ---------- */
+  const doctors =
+    statData?.series?.find((i) => i.name === "Active Doctors")?.data?.[0] || 0;
+
+  const patients =
+    statData?.series?.find((i) => i.name === "Active Patients")?.data?.[0] || 0;
+
+  const total = doctors + patients;
+  const hasData = total > 0;
+
+  /* ---------- Chart Data ---------- */
+  const DATA = hasData
+    ? [
+        {
+          label: "Active Doctors",
+          value: doctors,
+          percent: Math.round((doctors / total) * 100),
+          color: "#4C6EF5",
+        },
+        {
+          label: "Active Patients",
+          value: patients,
+          percent: Math.round((patients / total) * 100),
+          color: "#00C9A7",
+        },
+      ]
+    : [];
+
+  let offset = 0;
 
   return (
     <Box>
-     <Box
+      {/* ---------- Header ---------- */}
+      <Box
         sx={{
           display: "flex",
-          flexDirection: "row",
           justifyContent: "space-between",
+          mb: 2,
         }}
       >
-        <Typography
-          sx={{
-            fontSize: "15px",
-            fontWeight: 600,
-            color: "#212121",
-            mb: 1,
-          }}
-        >
+        <Typography fontSize="15px" fontWeight={600} color="#212121">
           Active Doctors vs Active Patients
         </Typography>
 
-        <img
-          src={more}
-          alt=""
-          style={{ cursor: "pointer" }}
-          // onClick={() => {
-          //   console.log("Image clicked");
-          // }}
-        />
+        <img src={more} alt="more" style={{ cursor: "pointer" }} />
       </Box>
 
-      <Stack sx={{display:"flex", flexDirection: isMobile? "column" : "row", gap:"20px"}}>
-        {/* Donut Chart */}
+      <Stack
+        direction={isMobile ? "column" : "row"}
+        spacing={3}
+        alignItems="center"
+      >
+        {/* ---------- Donut Chart ---------- */}
         <Box position="relative" width={240} height={240}>
           <svg width="240" height="240" viewBox="0 0 240 240">
-            {DATA.map((item) => {
-              const dash = (item.value / 100) * CIRCUMFERENCE;
-              const circle = (
-                <circle
-                  key={item.label}
-                  cx="120"
-                  cy="120"
-                  r={RADIUS}
-                  fill="none"
-                  stroke={item.color}
-                  strokeWidth="20"
-                  strokeDasharray={`${dash} ${CIRCUMFERENCE}`}
-                  strokeDashoffset={-offset}
-                  strokeLinecap="round"
-                />
-              );
-              offset += dash;
-              return circle;
-            })}
+            {/* --- Base Ring (Always Visible) --- */}
+            <circle
+              cx="120"
+              cy="120"
+              r={RADIUS}
+              fill="none"
+              stroke="#E5E7EB"
+              strokeWidth="20"
+              strokeDasharray={!hasData ? "6 6" : "none"}
+            />
+
+            {/* --- Data Rings --- */}
+            {hasData &&
+              DATA.map((item) => {
+                const dash = (item.percent / 100) * CIRCUMFERENCE;
+
+                const circle = (
+                  <circle
+                    key={item.label}
+                    cx="120"
+                    cy="120"
+                    r={RADIUS}
+                    fill="none"
+                    stroke={item.color}
+                    strokeWidth="20"
+                    strokeDasharray={`${dash} ${CIRCUMFERENCE}`}
+                    strokeDashoffset={-offset}
+                    strokeLinecap="round"
+                  />
+                );
+
+                offset += dash;
+                return circle;
+              })}
           </svg>
 
-          {/* Center Text */}
+          {/* ---------- Center Text for the Donut---------- */}
           <Box
             position="absolute"
             inset={0}
-            sx={{display: isMobile ? "none":"flex"}}
+            sx={{display: isMobile? "none" : "flex"}}
             alignItems="center"
             justifyContent="center"
+            flexDirection="column"
           >
-            <Typography fontSize={28} fontWeight={700}>
-              30%
-            </Typography>
-          </Box>
-
-          {/* Tooltip */}
-          <Box
-            position="absolute"
-            top={24}
-            right={0}
-            bgcolor="#1F2937"
-            color="#fff"
-            px={1.5}
-            py={0.5}
-            borderRadius={2}
-            display="flex"
-            alignItems="center"
-            gap={0.5}
-            fontSize={12}
-          >
-            {/* <TrendingUpIcon sx={{ fontSize: 14, color: "#22C55E" }} /> */}
-            Cardiology
+            {hasData ? (
+              <>
+                <Typography fontSize={26} fontWeight={700}>
+                  {DATA[0].percent}%
+                </Typography>
+                <Typography fontSize={12} color="text.secondary">
+                  Doctors
+                </Typography>
+              </>
+            ) : (
+              <>
+                <Typography fontSize={20} fontWeight={600} color="#6B7280">
+                  0%
+                </Typography>
+                <Typography fontSize={12} color="#9CA3AF">
+                  No data yet
+                </Typography>
+              </>
+            )}
           </Box>
         </Box>
 
-        {/* Stats */}
+        {/* ---------- Stats ---------- */}
         <Box
           display="grid"
           gridTemplateColumns="repeat(2, 1fr)"
           gap={3}
-          flex={1}
+          width="100%"
         >
-          {DATA.map((item) => (
+          {(hasData
+            ? DATA
+            : [
+                {
+                  label: "Active Doctors",
+                  value: 0,
+                  percent: 0,
+                  color: "#4C6EF5",
+                },
+                {
+                  label: "Active Patients",
+                  value: 0,
+                  percent: 0,
+                  color: "#00C9A7",
+                },
+              ]
+          ).map((item) => (
             <Stack key={item.label} spacing={0.5}>
               <Stack direction="row" alignItems="center" spacing={1}>
                 <Box
@@ -135,8 +175,13 @@ export default function TopSpecialties() {
                   {item.label}
                 </Typography>
               </Stack>
+
               <Typography fontSize={22} fontWeight={700}>
                 {item.value}
+              </Typography>
+
+              <Typography fontSize={12} color="text.secondary" >
+                {item.percent}%
               </Typography>
             </Stack>
           ))}

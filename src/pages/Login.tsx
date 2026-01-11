@@ -5,7 +5,7 @@ import {
   InputAdornment,
   Typography,
 } from "@mui/material";
-import Text from "./component/Text";
+
 import TextField from "./component/form/TextField";
 import { useState } from "react";
 import Button from "./component/form/Button";
@@ -16,6 +16,7 @@ import axios from "axios";
 import { useAuthStore } from "../store";
 import logo from "../assets/loginLogo.svg";
 import bg from "../assets/bg-image.svg";
+import { useTheme, useMediaQuery } from "@mui/material";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -54,11 +55,15 @@ export default function Login() {
   });
 
   const { isPending } = loginMutation;
+
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
   return (
     <Box
       sx={{
-        minHeight: "100vh", // full screen height
-        display: "flex",
+        minHeight: "100vh", 
+        display:  "flex",
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: "#000",
@@ -72,10 +77,11 @@ export default function Login() {
           backgroundColor: "white",
           maxWidth: "480px",
           width: "100%",
+          height: isMobile? "100vh":"auto",
           paddingX: "32px",
           paddingY: "20px",
           gap: "36px",
-          borderRadius: "20px",
+          borderRadius: isMobile?"0px":"20px",
         }}
       >
         <Stack>
@@ -117,6 +123,7 @@ export default function Login() {
           component="form"
           className="login-container"
           onSubmit={handleSubmit}
+          sx={{marginTop:"34px"}}
         >
           <Stack width={"100%"} spacing={"15px"}>
             <TextField
@@ -124,6 +131,7 @@ export default function Login() {
               onChange={(e) => setEmail(e.target.value)}
               labelText="Email or Phone"
               placeholder="e.g admin@careoneclinics.com"
+
             />
             <TextField
               labelText="Password"
