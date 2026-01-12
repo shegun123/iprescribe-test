@@ -1,8 +1,23 @@
 import { Box, Typography } from "@mui/material";
 import { LineChart } from "@mui/x-charts/LineChart";
-import more from "../../../assets/more.svg"
+import more from "../../../assets/more.svg";
 
-export default function ConsultationOverTimeCard({ statData }) {
+/* ---------- Types ---------- */
+interface ConsultationItem {
+  month: string;
+  count: number;
+}
+
+interface StatData {
+  consultationOverTime: ConsultationItem[];
+}
+
+interface Props {
+  statData?: StatData;
+}
+
+/* ---------- Component ---------- */
+export default function ConsultationOverTimeCard({ statData }: Props) {
   return (
     <Box>
       {/* Header */}
@@ -24,14 +39,10 @@ export default function ConsultationOverTimeCard({ statData }) {
           Consultation Over Time
         </Typography>
 
-        
         <img
           src={more}
-          alt=""
+          alt="More options"
           style={{ cursor: "pointer" }}
-          // onClick={() => {
-          //   console.log("Image clicked");
-          // }}
         />
       </Box>
 
@@ -41,7 +52,9 @@ export default function ConsultationOverTimeCard({ statData }) {
         series={[
           {
             data: statData
-              ? statData.consultationOverTime.map((c) => c.count)
+              ? statData.consultationOverTime.map(
+                  (c: ConsultationItem) => c.count
+                )
               : [],
             area: true,
             color: "#0095FF",
@@ -52,7 +65,9 @@ export default function ConsultationOverTimeCard({ statData }) {
           {
             scaleType: "point",
             data: statData
-              ? statData?.consultationOverTime?.map((c) => c.month)
+              ? statData.consultationOverTime.map(
+                  (c: ConsultationItem) => c.month
+                )
               : [],
             tickLabelStyle: {
               fill: "#9CA3AF",
@@ -72,7 +87,7 @@ export default function ConsultationOverTimeCard({ statData }) {
         ]}
         grid={{ horizontal: true }}
         slotProps={{
-          legend: { hidden: true },
+          legend: { position: "none" }, // ✅ FIXED
           tooltip: {
             sx: {
               backgroundColor: "#111827",

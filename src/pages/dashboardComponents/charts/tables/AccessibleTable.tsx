@@ -9,8 +9,21 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useAuthStore } from "../../../../store";
 
+/* ---------- Types ---------- */
+interface Patient {
+  id: number;
+  created_at: string;
+  first_name: string | null;
+  email: string | null;
+  phone: string | null;
+  last_seen: string | null;
+  state: string | null;
+  device: string | null;
+  status: string | null;
+}
+
 /* ---------- Helpers ---------- */
-const formatDate = (date) => {
+const formatDate = (date?: string | null): string => {
   if (!date) return "N/A";
   return new Date(date).toISOString().split("T")[0];
 };
@@ -22,7 +35,9 @@ export default function RecentPatientsTable() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-  const { data: patientData, isLoading } = useQuery({
+  const { data: patientData, isLoading } = useQuery<{
+    data: Patient[];
+  }>({
     queryKey: ["patient-data"],
     queryFn: async () => {
       const response = await axios.get(
@@ -113,7 +128,7 @@ export default function RecentPatientsTable() {
               </TableRow>
             )}
 
-            {patientData?.data?.map((row, index) => (
+            {patientData?.data?.map((row: Patient, index: number) => (
               <TableRow
                 key={row.id}
                 sx={{

@@ -2,7 +2,26 @@ import { Box, Typography } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import more from "../../../assets/more.svg"
 
-export default function ActiveDoctorsPatientsChart({ statData }) {
+// Type for your dataset
+interface StatData {
+  active_doctors_vs_patients?: {
+    categories?: string[];
+    series?: { data?: number[] }[] | undefined;
+  };
+}
+
+interface DatasetItem {
+  month: string;
+  doctors: number;
+  patients: number;
+  [key: string]: string | number;
+}
+
+interface Props {
+  statData: StatData;
+}
+
+export default function ActiveDoctorsPatientsChart({ statData } : Props) {
   // const dataset = [
   //   { month: "Jan", doctors: 68, patients: 102 },
   //   { month: "Feb", doctors: 70, patients: 30 },
@@ -17,15 +36,12 @@ export default function ActiveDoctorsPatientsChart({ statData }) {
   //   { month: "Nov", doctors: 40, patients: 22 },
   //   { month: "Dec", doctors: 70, patients: 102 },
   // ]
-  const dataset =
-    statData?.active_doctors_vs_patients?.categories?.map((month, index) => {
-      return {
-        month: month,
-        doctors: statData?.active_doctors_vs_patients?.series[0]?.data?.[index],
-        patients:
-          statData?.active_doctors_vs_patients?.series[1]?.data?.[index],
-      };
-    }) || [];
+  const dataset: DatasetItem[] =
+    statData?.active_doctors_vs_patients?.categories?.map((month, index) => ({
+      month,
+      doctors: statData?.active_doctors_vs_patients?.series?.[0]?.data?.[index] || 0,
+      patients: statData?.active_doctors_vs_patients?.series?.[1]?.data?.[index] || 0,
+    })) || [];
 
   console.log(dataset);
   return (
@@ -78,10 +94,10 @@ export default function ActiveDoctorsPatientsChart({ statData }) {
         grid={{ horizontal: true }}
         slotProps={{
           legend: {
-            direction: "row",
+            direction: "horizontal",
             position: {
               vertical: "top",
-              horizontal: "right",
+              horizontal: "end",
             },
           },
         }}

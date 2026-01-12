@@ -7,28 +7,52 @@ import {
 } from "@mui/material";
 import more from "../../../assets/more.svg";
 
-
 /* ---------- Constants ---------- */
 const RADIUS = 90;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
+/* ---------- Types ---------- */
+interface SeriesItem {
+  name: string;
+  data: number[];
+}
+
+interface StatData {
+  series: SeriesItem[];
+}
+
+interface DonutItem {
+  label: string;
+  value: number;
+  percent: number;
+  color: string;
+}
+
+interface Props {
+  statData?: StatData;
+}
+
 /* ---------- Component ---------- */
-export default function TopSpecialties({ statData }) {
+export default function TopSpecialties({ statData }: Props) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   /* ---------- Extract API Data ---------- */
   const doctors =
-    statData?.series?.find((i) => i.name === "Active Doctors")?.data?.[0] || 0;
+    statData?.series
+      ?.find((i: SeriesItem) => i.name === "Active Doctors")
+      ?.data?.[0] ?? 0;
 
   const patients =
-    statData?.series?.find((i) => i.name === "Active Patients")?.data?.[0] || 0;
+    statData?.series
+      ?.find((i: SeriesItem) => i.name === "Active Patients")
+      ?.data?.[0] ?? 0;
 
   const total = doctors + patients;
   const hasData = total > 0;
 
   /* ---------- Chart Data ---------- */
-  const DATA = hasData
+  const DATA: DonutItem[] = hasData
     ? [
         {
           label: "Active Doctors",
@@ -72,7 +96,7 @@ export default function TopSpecialties({ statData }) {
         {/* ---------- Donut Chart ---------- */}
         <Box position="relative" width={240} height={240}>
           <svg width="240" height="240" viewBox="0 0 240 240">
-            {/* --- Base Ring (Always Visible) --- */}
+            {/* --- Base Ring --- */}
             <circle
               cx="120"
               cy="120"
@@ -85,7 +109,7 @@ export default function TopSpecialties({ statData }) {
 
             {/* --- Data Rings --- */}
             {hasData &&
-              DATA.map((item) => {
+              DATA.map((item: DonutItem) => {
                 const dash = (item.percent / 100) * CIRCUMFERENCE;
 
                 const circle = (
@@ -108,11 +132,13 @@ export default function TopSpecialties({ statData }) {
               })}
           </svg>
 
-          {/* ---------- Center Text for the Donut---------- */}
+          {/* ---------- Center Text ---------- */}
           <Box
             position="absolute"
-            inset={0}
-            sx={{display: isMobile? "none" : "flex"}}
+            sx={{
+              inset: 0, // ✅ FIXED (must be inside sx)
+              display: isMobile ? "none" : "flex",
+            }}
             alignItems="center"
             justifyContent="center"
             flexDirection="column"
@@ -162,7 +188,7 @@ export default function TopSpecialties({ statData }) {
                   color: "#00C9A7",
                 },
               ]
-          ).map((item) => (
+          ).map((item: DonutItem) => (
             <Stack key={item.label} spacing={0.5}>
               <Stack direction="row" alignItems="center" spacing={1}>
                 <Box
@@ -180,7 +206,7 @@ export default function TopSpecialties({ statData }) {
                 {item.value}
               </Typography>
 
-              <Typography fontSize={12} color="text.secondary" >
+              <Typography fontSize={12} color="text.secondary">
                 {item.percent}%
               </Typography>
             </Stack>

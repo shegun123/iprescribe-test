@@ -5,7 +5,43 @@ import arror from "../../assets/cardArror.svg";
 import uparror from "../../assets/arrowUp.svg";
 import { useTheme, useMediaQuery } from "@mui/material";
 
-const StatCard = ({ statData }: { statData: any }) => {
+interface StatData{
+patients : {
+  total_patients : string;
+  positive : boolean;
+  patients_percentage_since_last_week : string;
+}
+
+doctors : {
+  total_patients : string;
+  total_doctors : string;
+  positive : boolean;
+  doctors_percentage_since_last_week : string
+}
+
+pending_reviews : {
+  total_pending_reviews : string;
+  total_doctors : string;
+  positive : boolean;
+  pending_reviews_percentage_since_last_week : string
+}
+
+consultations : {
+  total_consultations : string;
+  total_doctors : string;
+  positive : boolean;
+  consultations_percentage_since_last_week : string
+}
+
+prescriptions : {
+  total_prescriptions : string;
+
+  positive : boolean;
+  prescriptions_percentage_since_last_week : string
+}
+}
+
+const StatCard = ({ statData  } : {statData : StatData}) => {
 
    const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
