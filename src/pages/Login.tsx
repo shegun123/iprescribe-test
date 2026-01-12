@@ -20,7 +20,7 @@ import { useTheme, useMediaQuery } from "@mui/material";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
-  const { setToken, token } = useAuthStore();
+  const { setToken } = useAuthStore();
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const navigate = useNavigate();
@@ -28,11 +28,11 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  function handleSubmit(e) {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-
     loginMutation.mutate();
   }
+  
   const loginMutation = useMutation({
     mutationFn: async () => {
       const response = await axios.post(
@@ -49,9 +49,9 @@ export default function Login() {
       setToken(user.token);
       navigate("/dashboard");
     },
-    onError: (error) => {
-      alert(error.response.data.message);
-    },
+    // onError: (error) => {
+    //   alert(error.response.data.message);
+    // },
   });
 
   const { isPending } = loginMutation;

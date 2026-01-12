@@ -5,7 +5,7 @@ import arror from "../../assets/cardArror.svg";
 import uparror from "../../assets/arrowUp.svg";
 import { useTheme, useMediaQuery } from "@mui/material";
 
-const StatCard = ({ statData }) => {
+const StatCard = ({ statData }: { statData: any }) => {
 
    const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
