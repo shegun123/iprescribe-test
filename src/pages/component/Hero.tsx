@@ -8,7 +8,7 @@ import { useTheme } from "@mui/material/styles";
 
 export default function Hero() {
   const theme = useTheme(); // gives you access to MUI's breakpoints
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   return (
     <Box
@@ -21,7 +21,6 @@ export default function Hero() {
         py: { xs: "38px", md: "0" },
         gap: { xs: "48px", md: "0" },
         background: "linear-gradient(180deg, #FFFFFF 0%, #D4DDFF 100%)",
-       
       }}
     >
       {/* LEFT CONTENT */}
@@ -59,9 +58,7 @@ export default function Hero() {
               sm: "56px",
               md: "72px",
             },
-            textAlign: {xs:"center",
-              md:"left"
-            }
+            textAlign: { xs: "center", md: "left" },
           }}
         >
           Your Bridge <br />
@@ -75,9 +72,7 @@ export default function Hero() {
             fontSize: "16px",
             lineHeight: "28px",
             mt: "12px",
-            textAlign: {xs:"center",
-              md:"left"
-            }
+            textAlign: { xs: "center", md: "left" },
           }}
         >
           Schedule visits, communicate with care providers, and manage
@@ -89,8 +84,10 @@ export default function Hero() {
           sx={{
             display: "flex",
             flexDirection: "row",
-            gap: isMobile ? "10.46px":"12px",
-            mt:isMobile ? "27.27px" : "40px",
+            alignItems: "center",
+            justifyContent: isMobile ? "center" : "flex-start",
+            gap: isMobile ? "10.46px" : "12px",
+            mt: isMobile ? "27.27px" : "40px",
           }}
         >
           {/* Google Play */}
@@ -109,14 +106,26 @@ export default function Hero() {
           >
             <img src={googleplay} alt="Google Play" />
             <Box sx={{ textAlign: "left" }}>
-              <Typography sx={{ fontSize: "10px", color: "#EEF2FF" }}>
-                Coming Soon
-              </Typography>
-              <Typography
-                sx={{ fontSize: "16px", fontWeight: 600, color: "#EEF2FF" }}
-              >
-                Google Play
-              </Typography>
+              <Box sx={{ textAlign: "left" }}>
+                <Typography
+                  sx={{
+                    fontSize: isMobile ? "8.72px" : "10px",
+                    color: "#EEF2FF",
+                    fontWeight: "400",
+                  }}
+                >
+                  Coming Soon
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: isMobile ? "13.95" : "16px",
+                    fontWeight: 600,
+                    color: "#EEF2FF",
+                  }}
+                >
+                  Google Play
+                </Typography>
+              </Box>
             </Box>
           </Button>
 
@@ -136,11 +145,21 @@ export default function Hero() {
           >
             <img src={appStore} alt="App Store" />
             <Box sx={{ textAlign: "left" }}>
-              <Typography sx={{ fontSize: "10px", color: "#EEF2FF" }}>
+              <Typography
+                sx={{
+                  fontSize: isMobile ? "8.72px" : "10px",
+                  color: "#EEF2FF",
+                  fontWeight: "400",
+                }}
+              >
                 Coming Soon
               </Typography>
               <Typography
-                sx={{ fontSize: "16px", fontWeight: 600, color: "#EEF2FF" }}
+                sx={{
+                  fontSize: isMobile ? "13.95" : "16px",
+                  fontWeight: 600,
+                  color: "#EEF2FF",
+                }}
               >
                 App Store
               </Typography>
